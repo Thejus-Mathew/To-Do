@@ -1,29 +1,145 @@
 import { MDBBadge, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux';
+import { addTodo, deleteTodo, editTodo } from '../Redux/todoSlice';
+import { toast } from 'react-toastify';
 
 
 
 function AllTodo() {
+  const todos = useSelector(state=>state.todoSlice)
+  const[todo,setTodo]=useState({
+    description:"",
+    status:false,
+    id:0,
+    priority:"1",
+    time:"",
+    date:""
+  })
+  const dispatch = useDispatch()
+
+
+  useEffect(()=>{
+    if(todos.length>0){
+      setTodo({...todo,id:(todos[todos.length-1].id+1)})
+    }else{
+      setTodo({...todo,id:1})
+    }
+  },[todos])
+
+
+  const[filter,setFilter] = useState("0")
+  
+
   const [showEdit, setShowEdit] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-  const handleCloseEdit = () => setShowEdit(false);
-  const handleShowEdit = () => setShowEdit(true);
-  const handleCloseAdd = () => setShowAdd(false);
+  const handleCloseEdit = () => {
+    setTodo({
+      description:"",
+      status:false,
+      id:0,
+      priority:'1',
+      time:"",
+      date:""
+    })
+    setShowEdit(false)
+  }
+
+
+  const handleShowEdit = (id) => {
+    setTodo(todos.find(item=>item?.id==id))
+    setShowEdit(true)
+  }
+
+
+  const handleCloseAdd = () => {
+    setTodo({
+      description:"",
+      status:false,
+      id:0,
+      priority:'1',
+      time:"",
+      date:""
+    })
+    setShowAdd(false)
+  }
   const handleShowAdd = () => setShowAdd(true);
+
+  const handleAddTodo = () => {
+    if(!todo.description || !todo.time || !todo.date) {
+      toast.info("Add missing fields")
+    }else{
+      dispatch(addTodo(todo))
+      handleCloseAdd()
+    }
+  }
+
+  const handleEditTodo = () =>{
+    dispatch(editTodo(todo))
+    handleCloseEdit()
+  }
+
+
+  const handleFilter = (item)=>{
+    if (filter == "0") {
+      return true
+    }else if(item?.priority == filter){
+      return true
+    }else{
+      return false
+    }
+  }
+
+  const handleDelete = (id) =>{
+    dispatch(deleteTodo(id))
+  }
+
+
+  const handleComplete = (id) =>{
+    let payload = {...todos.find(item=>item.id==id)}
+    payload.status = payload.status?false:true
+    dispatch(editTodo(payload))
+  }
+
+
+  const time = (date,time,status)=>{
+    const now = Math.floor(new Date().getTime()/(1000*60))
+    const then = new Date(`${date} ${time}`).getTime()/(1000*60)
+
+    let days = Math.floor((then-now)/(60*24))
+    let hour = Math.floor(((then-now)%(60*24))/60)
+    let min = ((then-now)%(60*24))%60
+
+    if(then>now){
+      if(status){
+        return <span className='text-success'>{`${days}day  ${hour}hr  ${min}min`}</span>
+      }else{
+        return <span className='text-dark'>{`${days}day  ${hour}hr  ${min}min`}</span>
+      }
+    }else{
+      if(status){
+        return <span className='text-dark'>{`-- day  -- hr  -- min`}</span>
+      }else{
+        return <span className='text-danger'>{`${days*(-1)}day  ${hour*(-1)}hr  ${min*(-1)}min delay`}</span>
+      }
+    }    
+  }
+
+
   return (
     <div className='p-3'>
       <div className="add d-flex justify-content-end gap-2 mb-2 align-items-center">
         <div className="filter d-flex align-items-center">
             <span style={{width:"200px"}}>Filter Priorities</span>
-            <Form.Select aria-label="Default select example">
-                <option value="1">All</option>
-                <option value="2">High</option>
-                <option value="3">Medium</option>
-                <option value="4">Low</option>
+            <Form.Select aria-label="Default select example" value={filter} onChange={(e)=>setFilter(e.target.value)}>
+                <option value="0">All</option>
+                <option value="1">High</option>
+                <option value="2">Medium</option>
+                <option value="3">Low</option>
             </Form.Select>
         </div>
-        <button className='btn btn-info me-5 text-light' onClick={handleShowAdd}>Add To-Do</button>
+        <button className='btn btn-info me-5 text-light' onClick={handleShowAdd}>Add Task</button>
       </div>
     <MDBTable align='middle'>
       <MDBTableHead>
@@ -36,70 +152,31 @@ function AllTodo() {
         </tr>
       </MDBTableHead>
       <MDBTableBody>
-        <tr className='border-bottom border-info'>
-          <td>
-            <p className='fw-bold mb-1'>John Doe</p>
-          </td>
-          <td>
-            <MDBBadge color='danger' style={{width:"80px"}} pill>
-              Pending
-            </MDBBadge>
-          </td>
-          <td>
-            <MDBBadge color='danger' style={{width:"60px"}} pill>
-              high
-            </MDBBadge>
-          </td>
-          <td>12hr 13min</td>
-          <td>
-            <button className='btn btn-light text-secondary m-1'><i className="fa-solid fa-circle-check"></i></button>
-            <button className='btn btn-light text-info m-1' onClick={handleShowEdit}><i className="fa-solid fa-pen-to-square"></i></button>
-            <button className='btn btn-light text-danger m-1'><i className="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
-        <tr className='border-bottom border-info'>
-          <td>
-            <p className='fw-bold mb-1'>John Doe</p>
-          </td>
-          <td>
-            <MDBBadge color='success' style={{width:"80px"}} pill>
-              Completed
-            </MDBBadge>
-          </td>
-          <td>
-            <MDBBadge color='warning' style={{width:"60px"}} pill>
-              Medium
-            </MDBBadge>
-          </td>
-          <td>12hr 13min</td>
-          <td>
-
-            <button className='btn btn-light text-secondary m-1'><i className="fa-solid fa-circle-check"></i></button>
-            <button className='btn btn-light text-info m-1' onClick={handleShowEdit}><i className="fa-solid fa-pen-to-square"></i></button>
-            <button className='btn btn-light text-danger m-1'><i className="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
-        <tr className='border-bottom border-info'>
-          <td>
-            <p className='fw-bold mb-1'>John Doe</p>
-          </td>
-          <td>
-            <MDBBadge color='danger' style={{width:"80px"}} pill>
-              Pending
-            </MDBBadge>
-          </td>
-          <td>
-            <MDBBadge color='success' style={{width:"60px"}} pill>
-              Low
-            </MDBBadge>
-          </td>
-          <td>12hr 13min</td>
-          <td>
-            <button className='btn btn-light text-success m-1'><i className="fa-solid fa-circle-check"></i></button>
-            <button className='btn btn-light text-info m-1' onClick={handleShowEdit}><i className="fa-solid fa-pen-to-square"></i></button>
-            <button className='btn btn-light text-danger m-1'><i className="fa-solid fa-trash"></i></button>
-          </td>
-        </tr>
+        {
+          todos.filter(item=>handleFilter(item)).map((item,index)=>(
+            <tr key={index} className='border-bottom border-info'>
+              <td>
+                <p className='fw-bold mb-1'>{item?.description}</p>
+              </td>
+              <td>
+                <MDBBadge color={item?.status?"success":"danger"} style={{width:"80px"}} pill>
+                  {item?.status?"Completed":"Pending"}
+                </MDBBadge>
+              </td>
+              <td>
+                <MDBBadge color={item?.priority=="1"?"danger":item?.priority=="2"?"warning":item?.priority=="3"?"success":""} style={{width:"60px"}} pill>
+                  {item?.priority=="1"?"High":item?.priority=="2"?"Medium":item?.priority=="3"?"Low":""}
+                </MDBBadge>
+              </td>
+              <td>{time(item?.date,item?.time,item?.status)}</td>
+              <td>
+                <button className={item?.status?'btn btn-light text-success m-1':'btn btn-light text-secondary m-1'} onClick={()=>handleComplete(item?.id)}><i className="fa-solid fa-circle-check"></i></button>
+                <button className='btn btn-light text-info m-1' onClick={()=>handleShowEdit(item?.id)}><i className="fa-solid fa-pen-to-square"></i></button>
+                <button className='btn btn-light text-danger m-1' onClick={()=>handleDelete(item?.id)}><i className="fa-solid fa-trash"></i></button>
+              </td>
+            </tr>
+          ))
+        }
       </MDBTableBody>
     </MDBTable>
 
@@ -115,7 +192,7 @@ function AllTodo() {
                     Description
                 </Form.Label>
                 <Col sm="10">
-                <Form.Control type="text" placeholder="Description" />
+                <Form.Control type="text" placeholder="Description" value={todo.description} onChange={(e)=>setTodo({...todo,description:e.target.value})} />
                 </Col>
             </Form.Group>
             <Form.Group as={Row} className="mb-3" >
@@ -123,7 +200,7 @@ function AllTodo() {
                 Status
                 </Form.Label>
                 <Col sm="10">
-                    <Form.Select aria-label="Default select example">
+                    <Form.Select aria-label="Default select example" value={todo.status?"2":"1"} onChange={(e)=>setTodo({...todo,status:e.target.value=="2"?true:false})}>
                         <option value="1">Pending</option>
                         <option value="2">Completed</option>
                     </Form.Select>
@@ -134,7 +211,7 @@ function AllTodo() {
                 Priority
                 </Form.Label>
                 <Col sm="10">
-                    <Form.Select aria-label="Default select example">
+                    <Form.Select aria-label="Default select example" value={todo.priority} onChange={(e)=>setTodo({...todo,priority:e.target.value})}>
                         <option value="1">High</option>
                         <option value="2">Medium</option>
                         <option value="3">Low</option>
@@ -146,8 +223,8 @@ function AllTodo() {
                     Time
                 </Form.Label>
                 <Col sm="10">
-                <Form.Control type="date" placeholder="Description" />
-                <Form.Control type="time" placeholder="Description" />
+                <Form.Control type="date" value={todo.date} onChange={(e)=>setTodo({...todo,date:e.target.value})}/>
+                <Form.Control type="time" value={todo.time} onChange={(e)=>setTodo({...todo,time:e.target.value})}/>
                 </Col>
             </Form.Group>
         </Modal.Body>
@@ -155,7 +232,7 @@ function AllTodo() {
             <Button variant="secondary" onClick={handleCloseEdit}>
             Close
             </Button>
-            <Button variant="primary" onClick={handleCloseEdit}>
+            <Button variant="primary" onClick={handleEditTodo}>
             Save Changes
             </Button>
         </Modal.Footer>
@@ -171,7 +248,7 @@ function AllTodo() {
                     Description
                 </Form.Label>
                 <Col sm="10">
-                <Form.Control type="text" placeholder="Description" />
+                <Form.Control type="text" placeholder="Description" value={todo.description} onChange={(e)=>setTodo({...todo,description:e.target.value})} />
                 </Col>
             </Form.Group>
             <Form.Group as={Row} className="mb-3" >
@@ -187,7 +264,7 @@ function AllTodo() {
                 Priority
                 </Form.Label>
                 <Col sm="10">
-                    <Form.Select aria-label="Default select example">
+                    <Form.Select aria-label="Default select example" value={todo.priority} onChange={(e)=>setTodo({...todo,priority:e.target.value})}>
                         <option value="1">High</option>
                         <option value="2">Medium</option>
                         <option value="3">Low</option>
@@ -199,8 +276,8 @@ function AllTodo() {
                     Time
                 </Form.Label>
                 <Col sm="10">
-                <Form.Control type="date" placeholder="Description" />
-                <Form.Control type="time" placeholder="Description" />
+                <Form.Control type="date" value={todo.date} onChange={(e)=>setTodo({...todo,date:e.target.value})}/>
+                <Form.Control type="time" value={todo.time} onChange={(e)=>setTodo({...todo,time:e.target.value})}/>
                 </Col>
             </Form.Group>
         </Modal.Body>
@@ -208,7 +285,7 @@ function AllTodo() {
             <Button variant="secondary" onClick={handleCloseAdd}>
             Close
             </Button>
-            <Button variant="primary" onClick={handleCloseAdd}>
+            <Button variant="primary" onClick={handleAddTodo}>
             Save Changes
             </Button>
         </Modal.Footer>

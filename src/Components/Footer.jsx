@@ -8,22 +8,22 @@ function Footer() {
     <div>
     <MDBFooter className='text-center text-white position-fixed bottom-0 w-100' style={{ backgroundColor: 'rgb(125, 233, 255)' }}>
       <MDBContainer className='pt-4 border-bottom fs-4 d-flex justify-content-center align-items-center gap-5 text-light' style={{height:"10vh"}}>
-        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3' style={{aspectRatio:"1/1",borderRadius:"50%", height:"43px",width:"43px"}}>
+        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3 fs-6' style={{aspectRatio:"1/1",borderRadius:"50%", height:"30px",width:"30px"}}>
           <MDBIcon fab className='fab fa-facebook-f' />
         </div>
-        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3' style={{aspectRatio:"1/1",borderRadius:"50%", height:"43px",width:"43px"}}>
+        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3 fs-6' style={{aspectRatio:"1/1",borderRadius:"50%",height:"30px",width:"30px"}}>
           <MDBIcon fab className='fab fa-twitter' />
         </div>
-        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3' style={{aspectRatio:"1/1",borderRadius:"50%", height:"43px",width:"43px"}}>
+        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3 fs-6' style={{aspectRatio:"1/1",borderRadius:"50%",height:"30px",width:"30px"}}>
           <MDBIcon fab className='fab fa-google' />
         </div>
-        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3' style={{aspectRatio:"1/1",borderRadius:"50%", height:"43px",width:"43px"}}>
+        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3 fs-6' style={{aspectRatio:"1/1",borderRadius:"50%", height:"30px",width:"30px"}}>
           <MDBIcon fab className='fab fa-instagram' />
         </div>
-        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3' style={{aspectRatio:"1/1",borderRadius:"50%", height:"43px",width:"43px"}}>
+        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3 fs-6' style={{aspectRatio:"1/1",borderRadius:"50%",height:"30px",width:"30px"}}>
           <MDBIcon fab className='fab fa-linkedin' />
         </div>
-        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3' style={{aspectRatio:"1/1",borderRadius:"50%", height:"43px",width:"43px"}}>
+        <div className='bg-light text-info d-flex justify-content-center align-items-center p-3 mb-3 fs-6' style={{aspectRatio:"1/1",borderRadius:"50%",height:"30px",width:"30px"}}>
           <MDBIcon fab className='fab fa-github' />
         </div>
       </MDBContainer>

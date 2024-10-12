@@ -31,7 +31,7 @@ const todoSlice = createSlice({
             description:"Task 4",
             status:false,
             id:4,
-            priority:'1',
+            priority:'2',
             time:"05:44",
             date:"2024-10-10"
         }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteTodo, editTodo } from '../Redux/todoSlice';
+import { updateSearch } from '../Redux/searchSlice';
 
 function Pending() {
   const todos = useSelector(state=>state.todoSlice)
@@ -81,24 +82,28 @@ function Pending() {
     const now = Math.floor(new Date().getTime()/(1000*60))
     const then = new Date(`${date} ${time}`).getTime()/(1000*60)
 
-    let days = Math.floor((then-now)/(60*24))
-    let hour = Math.floor(((then-now)%(60*24))/60)
-    let min = ((then-now)%(60*24))%60
+    let days = then>now?Math.floor((then-now)/(60*24)):Math.floor((now-then)/(60*24))
+    let hour = then>now?Math.floor(((then-now)%(60*24))/60):Math.floor(((now-then)%(60*24))/60)
+    let min = then>now?((then-now)%(60*24))%60:((now-then)%(60*24))%60
 
-    if(then>now){
+    if(then>=now){
       if(status){
-        return <span className='text-success'>{`${days}day  ${hour}hr  ${min}min`}</span>
+        return <span className='text-success'>{`${days==0?'':`${days}day`} ${hour==0?'':`${hour}hr`}  ${min==0 && days==0 && hour==0?'59Sec':min==0?"":`${min}min`} spare`}</span>
       }else{
-        return <span className='text-dark'>{`${days}day  ${hour}hr  ${min}min`}</span>
+        return <span className='text-dark'>{`${days==0?'':`${days}day`} ${hour==0?'':`${hour}hr`}  ${min==0 && days==0 && hour==0?'59Sec':min==0?"":`${min}min`}`}</span>
       }
     }else{
       if(status){
-        return <span className='text-dark'>{`-- day  -- hr  -- min`}</span>
+        return <span className='text-dark'>{`-- -- --`}</span>
       }else{
-        return <span className='text-danger'>{`${days*(-1)}day  ${hour*(-1)}hr  ${min*(-1)}min delay`}</span>
+        return <span className='text-danger'>{`${days==0?'':`${days}day`} ${hour==0?'':`${hour}hr`}  ${min==0 && days==0 && hour==0?'59Sec':min==0?"":`${min}min`} overdue`}</span>
       }
     }    
   }
+
+  useEffect(()=>{
+    dispatch(updateSearch(""))
+  },[])
 
 
   return (

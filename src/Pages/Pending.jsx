@@ -157,6 +157,7 @@ function Pending() {
         }
       </MDBTableBody>
     </MDBTable>
+    <div style={{height:"14vh"}}></div>
 
 
 

@@ -183,7 +183,7 @@ function AllTodo() {
         }
       </MDBTableBody>
     </MDBTable>
-    <div className='bg-warning' style={{height:"14vh"}}></div>
+    <div style={{height:"14vh"}}></div>
 
 
 
